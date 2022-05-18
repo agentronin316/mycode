@@ -14,7 +14,7 @@ print(keyList)
 choice= input("Select a key: ")
 print(doreen_green.get(choice.lower(), "invalid key"))
 
-for i in range(0, len(keyList) - 1):
+for i in range(0, len(keyList)):
     print(f"{i}: {keyList[i]}")
 choice= int(input("Select a key by number: "))
 
