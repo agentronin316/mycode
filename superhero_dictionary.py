@@ -9,6 +9,13 @@ print(f"Full Name: {ProfessorX['name']}\nAlias: {ProfessorX['aliases'][4]}\nBase
 
 
 doreen_green["origin"]= "born this way"
-print(doreen_green.keys())
+keyList= list(doreen_green.keys())
+print(keyList)
 choice= input("Select a key: ")
 print(doreen_green.get(choice.lower(), "invalid key"))
+
+for i in range(0, len(keyList) - 1):
+    print(f"{i}: {keyList[i]}")
+choice= int(input("Select a key by number: "))
+
+print(doreen_green.get(keyList[choice], "invalid key"))
