@@ -11,4 +11,4 @@ print(f"Full Name: {ProfessorX['name']}\nAlias: {ProfessorX['aliases'][4]}\nBase
 doreen_green["origin"]= "born this way"
 print(doreen_green.keys())
 choice= input("Select a key: ")
-print(doreen_green.get(choice, "invalid key"))
+print(doreen_green.get(choice.lower(), "invalid key"))
