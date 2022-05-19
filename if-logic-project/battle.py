@@ -48,7 +48,7 @@ def combat(player,opponent):
         while opponent['time'] >= 25:
             opponent['time'] -= 25
             player['curHealth'] -= opponentTurn(opponent)
-            print(f"You are now at {player['curHealth']}"/{player['health']})
+            print(f"You are now at {player['curHealth']}/{player['health']}")
 
     if(opponent['curHealth'] <= 0):
         print("Congratulations, You Win!")
@@ -68,6 +68,7 @@ def playerTurn(player):
 
 def opponentTurn(opponent):
     choice= randint(1,100)
+    print(choice)
     if choice <= 50:
         print(f"You get smacked for {opponent['might']} damage!")
         return opponent['might']
