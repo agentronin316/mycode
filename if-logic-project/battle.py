@@ -76,5 +76,10 @@ def opponentTurn(opponent):
         print(f"You get blasted for {opponent['magic']} damage!")
         return opponent['magic']
 
-
-main()
+while True:
+    main()
+    try:
+        if 'y' != input("Do you want to play again? [y/n]: ").lower()[0]:
+            break
+    except:
+        break
