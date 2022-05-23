@@ -1,0 +1,276 @@
+#!/usr/bin/python3
+
+from random import randint
+import os
+
+true = True
+false = False
+sword = 'sword'
+potion = 'potion'
+
+
+# Start of code from combat loop project
+
+warriors = [
+    {"class": "Fighter",
+    "might": 5, "magic": 2, "speed": 3, "health": 20},
+    {"class": "Mage",
+    "might": 2, "magic": 5, "speed": 4, "health": 10},
+    {"class": "Spell-Blade",
+    "might": 4, "magic": 4, "speed": 5, "health": 15},
+]
+
+def combat(player,opponent):
+    player["curHealth"]= player["health"]
+    player["time"]= 0
+    opponent["curHealth"]= opponent["health"]
+    opponent["time"]= 0
+    while True:
+        player["time"] += player['speed']
+        opponent["time"] += opponent['speed']
+        while player['time'] >= 25:
+            player['time'] -= 25
+            opponent['curHealth'] -= playerTurn(player)
+            print(f"Monster is now at {opponent['curHealth']}/{opponent['health']}")
+            if(opponent['curHealth'] <= 0):
+                return True
+
+        while opponent['time'] >= 25:
+            opponent['time'] -= 25
+            player['curHealth'] -= opponentTurn(opponent)
+            print(f"You are now at {player['curHealth']}/{player['health']}")
+            if(player['curHealth'] <= 0):
+                return False
+
+
+def playerTurn(player):
+    while True:
+        choice= input(f"[p]hysical ({player['might']} damage) or [m]agical ({player['magic']} damage)").lower()
+        if choice != "":
+            if choice[0] == "p":
+                print(f"You slash the monster for {player['might']} damage!")
+                return player['might']
+            if choice[0] == "m":
+                print(f"You blast the monster for {player['magic']} damage!")
+                return player['magic']
+
+def opponentTurn(opponent):
+    choice= randint(1,100)
+    if choice <= 50:
+        print(f"The monster bit you for {opponent['might']} damage!")
+        return opponent['might']
+    else:
+        print(f"The monster melts your brain for {opponent['magic']} damage!")
+        return opponent['magic']
+
+# End of code from combat loop project
+
+# Replace RPG starter project with this code when new instructions are live
+
+def spawnMonster(rooms):
+    clearRooms = []
+    for x in rooms:
+        if not 'monster' in rooms[x]:
+            clearRooms.append(x)
+    randomRoom = clearRooms[randint(0, len(clearRooms) - 1)]
+    rooms[randomRoom]['monster'] = true 
+    print("A monster has appeared in the " + randomRoom)
+
+
+
+
+def showInstructions():
+    #print a main menu and the commands
+    print('''
+RPG Game
+========
+Commands:
+    go [direction]
+    get [item]
+    inspect [item]
+''')
+
+def showStatus(rooms, currentRoom, inventory, numTurns, numMonsters):
+    #print the player's current status
+    print('---------------------------')
+    print(f"Turns taken: {numTurns}, Monsters: {numMonsters}")
+    print('You are in the ' + currentRoom)
+    #print the current inventory
+    print('Inventory : ' + str(inventory))
+    #print an item if there is one
+    if "item" in rooms[currentRoom]:
+        print('You see a ' + rooms[currentRoom]['item'])
+    # print any movement directions that are available
+    if "north" in rooms[currentRoom]:
+        print("To the north is the " + rooms[currentRoom]['north'])
+    if "east" in rooms[currentRoom]:
+        print("To the east is the " + rooms[currentRoom]['east'])
+    if "south" in rooms[currentRoom]:
+        print("To the south is the " + rooms[currentRoom]['south'])
+    if "west" in rooms[currentRoom]:
+        print("To the west is the " + rooms[currentRoom]['west'])
+    
+    print("---------------------------")
+
+def checkWin(rooms):
+    for x in rooms:
+        if 'monster' in rooms[x]:
+            return false
+    return true
+
+def main():
+    while True:
+        numTurns = 0
+        numMonsters = 0
+        items = {
+            'key' : 'a rusted old key',
+            'potion' : 'a potion overflowing with magic',
+            'cookie' : "C is for Cookie and that's good enough for me",
+            'sword' : 'this sword has seen better days, but it can still stab monsters'
+        }
+        #an inventory, which is initially empty
+        inventory = []
+
+        #a dictionary linking a room to other rooms
+        ## A dictionary linking a room to other rooms
+        rooms = {
+
+                    'Hall' : {
+                            'south' : 'Kitchen',
+                            'east'  : 'Dining Room',
+                            'item'  : 'key'
+                        },
+
+                    'Kitchen' : {
+                            'north' : 'Hall',
+                            'monster' : true,
+                        },
+                    'Dining Room' : {
+                            'west' : 'Hall',
+                            'south': 'Garden',
+                            'item' : 'potion',
+                            'north' : 'Pantry',
+                        },
+                    'Garden' : {
+                            'north' : 'Dining Room',
+                            'item' : 'sword'
+                        },
+                    'Pantry' : {
+                            'south' : 'Dining Room',
+                            'item' : 'cookie',
+                            'monster' : true
+                        }
+                }
+        for x in rooms:
+            if 'monster' in rooms[x]:
+                numMonsters += 1
+
+        #start the player in the Hall
+        currentRoom = 'Hall'
+
+        showInstructions()
+
+        #loop forever
+        while True:
+
+
+            #get the player's next 'move'
+            #.split() breaks it up into an list array
+            #eg typing 'go east' would give the list:
+            #['go','east']
+            move = ''
+            while move == '':
+                showStatus(rooms, currentRoom, inventory, numTurns, numMonsters)
+                move = input('>')
+                os.system('clear')
+
+            # split allows an items to have a space on them
+            # get golden key is returned ["get", "golden key"]          
+            move = move.lower().split(" ", 1)
+
+            if move[0] =='inspect':
+                if move[1] in inventory or ('item' in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']):
+                    print(items[move[1]].capitalize())
+
+            if move[0] == 'help':
+                showInstructions()
+            #if they type 'go' first
+            if move[0] == 'go':
+                #check that they are allowed wherever they want to go
+                if move[1] in rooms[currentRoom]:
+                    numTurns += 1
+                    if numTurns % 10 == 0:
+                        spawnMonster(rooms)
+                        numMonsters += 1
+                    #set the current room to the new room
+                    currentRoom = rooms[currentRoom][move[1]]
+                #there is no door (link) to the new room
+                else:
+                    print('You can\'t go that way!')
+
+            #if they type 'get' first
+            if move[0] == 'get' :
+                #if the room contains an item, and the item is the one they want to get
+                if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
+                    numTurns += 1
+                    if numTurns % 10 == 0:
+                        spawnMonster(rooms)
+                        numMonsters += 1
+                        if numMonsters > 3:
+                            print('You are overrun by monsters and eaten alive. Game Over.')
+                            break
+                    #add the item to their inventory
+                    inventory += [move[1]]
+                    #display a helpful message
+                    print(move[1] + ' got!')
+                    #delete the item from the room
+                    del rooms[currentRoom]['item']
+                #otherwise, if the item isn't there to get
+                else:
+                    #tell them they can't get it
+                    print('Can\'t get ' + move[1] + '!')
+                    
+            
+            ## If a player enters a room with a monster
+            elif 'monster' in rooms[currentRoom]:
+                if sword in inventory and potion in inventory:
+                    print('A monster appears! You draw your sword and prepare a spell!')
+                    if combat(warriors[2].copy(), warriors[randint(0,2)].copy()):
+                        del rooms[currentRoom]['monster']
+                        numMonsters -= 1
+                    else:
+                        print('A monster has got you... GAME OVER!')
+                        break
+                elif potion in inventory:
+                    print('A monster appears! You prepare a spell!')
+                    if combat(warriors[1].copy(), warriors[randint(0,2)].copy()):
+                        del rooms[currentRoom]['monster']
+                        numMonsters -= 1
+                    else:
+                        print('A monster has got you... GAME OVER!')
+                        break
+                elif sword in inventory:
+                    print('A monster appears! You draw your sword!')
+                    if combat(warriors[0].copy(), warriors[randint(0,2)].copy()):
+                        del rooms[currentRoom]['monster']
+                        numMonsters -= 1
+                    else:
+                        print('A monster has got you... GAME OVER!')
+                        break
+                else:
+                    print('A monster has got you... GAME OVER!')
+                    break
+                
+            ## Define how a player can win
+            if currentRoom == 'Garden' and 'key' in inventory:
+                if numMonsters > 0:
+                    print('You start to unlock the gate, but are ambushed and killed by monsters before you finish... YOU DIED!')
+                elif 'cookie' in inventory:
+                    print('You slew all the monsters, unlock the gate with the key, and have a cookie to eat on your way home... YOU WIN!')
+                else:
+                    print('You slew all the monsters, unlock the gate with the key, and starve to death before you get home... YOU DIED!')
+                break
+
+        if (input('Play again? [y/n]').lower()[0] != 'y'):
+            break
+main()
