@@ -88,6 +88,7 @@ Commands:
     go [direction]
     get [item]
     inspect [item]
+    help
 ''')
 
 def showStatus(rooms, currentRoom, inventory, numTurns, numMonsters):
@@ -147,8 +148,7 @@ def main():
                         },
                     'Garden' : {
                             'north' : 'Dining Room',
-                            'item' : 'sword',
-                            'monster' : true
+                            'item' : 'sword'
                         },
                     'Pantry' : {
                             'south' : 'Dining Room',
